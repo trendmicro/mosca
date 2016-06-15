@@ -72,6 +72,27 @@ describe("mosca.Server", function() {
     });
   });
 
+  it("should emit \"pingreq\" of the corresponding client at a pingreq", function(done) {
+
+    var instance = this.instance;
+    buildClient(instance, done, function(client) {
+
+      var clientId = 'client';
+      var opts = buildOpts();
+      opts.clientId = clientId;
+
+      client.connect(opts);
+
+      instance.on('pingreq', function(c){
+        expect(c.id).to.equal(clientId);
+        client.disconnect();
+      });
+
+      client.pingreq();
+
+    });
+  });
+
   it("should pass mosca options to backend when publishing", function(done) {
     var instance = this.instance;
     buildClient(instance, done, function(client) {
@@ -145,6 +166,43 @@ describe("mosca.Server", function() {
       client1.subscribe({
         subscriptions: subscriptions,
         messageId: messageId
+      });
+    });
+  });
+
+  it("should fail if persistence can not connect", function (done) {
+    var newSettings = moscaSettings();
+
+    newSettings.persistence = {
+      factory: mosca.persistence.Mongo,
+      url: "mongodb://someUrlCannotConnect"
+    };
+
+    var server = new mosca.Server(newSettings, function (err) {
+      if (err instanceof Error) {
+        done();
+      } else {
+        expect().fail("new mosca.Server should fail");
+      }
+    });
+  });
+
+  it("should support subscribing via server.subscribe", function(done) {
+    var that = this;
+    buildAndConnect(done, this.instance, buildOpts(), function(client) {
+
+      that.instance.subscribe('a/+', function(topic, payload){
+        expect(topic).to.be.equal('a/b');
+        expect(payload.toString()).to.be.equal('some data');
+        client.disconnect();
+      }, function(){
+        var messageId = Math.floor(65535 * Math.random());
+        client.publish({
+          topic: "a/b",
+          payload: "some data",
+          messageId: messageId,
+          qos: 1
+        });
       });
     });
   });
@@ -797,4 +855,6 @@ describe("mosca.Server - MQTT backend", function() {
       }
     });
   });
+
+
 });

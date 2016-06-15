@@ -1,6 +1,6 @@
 {
   "name": "mosca",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "description": "MQTT broker as a module",
   "main": "index.js",
   "bin": {
@@ -49,13 +49,11 @@
   "author": "Matteo Collina <hello@matteocollina.com>",
   "license": "MIT",
   "devDependencies": {
-    "async_bench": "~0.5.1",
     "chai": "^3.5.0",
     "coveralls": "~2.11.1",
     "dox-foundation": "~0.5.4",
     "istanbul": "~0.4.0",
     "jshint": "~2.9.1",
-    "microtime": "~2.0.0",
     "mocha": "^2.0.1",
     "mongo-clean": "^1.1.0",
     "osenv": "^0.1.0",
@@ -100,7 +98,7 @@
   },
   "optionalDependencies": {
     "leveldown": "~1.4.3",
-    "zmq": "~2.14.0",
+    "zmq": "~2.15.0",
     "amqp": "~0.2.4",
     "redis": "~2.5.0",
     "hiredis": "^0.4.1",
